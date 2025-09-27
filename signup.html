@@ -283,119 +283,30 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const signupForm = document.getElementById('signupForm');
-            const fullNameInput = document.getElementById('fullName');
-            const emailInput = document.getElementById('email');
-            const passwordInput = document.getElementById('password');
-            const confirmPasswordInput = document.getElementById('confirmPassword');
-            const passwordToggle = document.getElementById('passwordToggle');
-            const confirmPasswordToggle = document.getElementById('confirmPasswordToggle');
-            const signupButton = document.getElementById('signupButton');
-            const buttonText = document.getElementById('buttonText');
-            const loadingSpinner = document.getElementById('loadingSpinner');
-            const nameError = document.getElementById('nameError');
-            const emailError = document.getElementById('emailError');
-            const passwordError = document.getElementById('passwordError');
-            const confirmPasswordError = document.getElementById('confirmPasswordError');
-            
-            // Toggle password visibility
-            passwordToggle.addEventListener('click', function() {
-                if (passwordInput.type === 'password') {
-                    passwordInput.type = 'text';
-                    passwordToggle.textContent = 'Hide';
-                } else {
-                    passwordInput.type = 'password';
-                    passwordToggle.textContent = 'Show';
-                }
-            });
-            
-            confirmPasswordToggle.addEventListener('click', function() {
-                if (confirmPasswordInput.type === 'password') {
-                    confirmPasswordInput.type = 'text';
-                    confirmPasswordToggle.textContent = 'Hide';
-                } else {
-                    confirmPasswordInput.type = 'password';
-                    confirmPasswordToggle.textContent = 'Show';
-                }
-            });
-            
-            // Form validation
-            function validateForm() {
-                let isValid = true;
-                
-                // Name validation
-                if (!fullNameInput.value.trim()) {
-                    nameError.style.display = 'block';
-                    isValid = false;
-                } else {
-                    nameError.style.display = 'none';
-                }
-                
-                // Email validation
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailInput.value || !emailRegex.test(emailInput.value)) {
-                    emailError.style.display = 'block';
-                    isValid = false;
-                } else {
-                    emailError.style.display = 'none';
-                }
-                
-                // Password validation
-                if (!passwordInput.value || passwordInput.value.length < 6) {
-                    passwordError.style.display = 'block';
-                    isValid = false;
-                } else {
-                    passwordError.style.display = 'none';
-                }
-                
-                // Confirm password validation
-                if (passwordInput.value !== confirmPasswordInput.value) {
-                    confirmPasswordError.style.display = 'block';
-                    isValid = false;
-                } else {
-                    confirmPasswordError.style.display = 'none';
-                }
-                
-                return isValid;
-            }
-            
-            // Form submission
-            signupForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                if (validateForm()) {
-                    // Show loading state
-                    buttonText.style.display = 'none';
-                    loadingSpinner.style.display = 'block';
-                    signupButton.disabled = true;
-                    
-                    // Simulate API call
-                    setTimeout(function() {
-                        // Reset loading state
-                        buttonText.style.display = 'block';
-                        loadingSpinner.style.display = 'none';
-                        signupButton.disabled = false;
-                        
-                        // In a real app, you would handle the signup response here
-                        alert('Account created successfully! (This is a demo)');
-                    }, 2000);
-                }
-            });
-            
-            // Social signup buttons
-            document.getElementById('googleSignup').addEventListener('click', function() {
-                alert('Google signup clicked (This is a demo)');
-            });
-            
-            document.getElementById('facebookSignup').addEventListener('click', function() {
-                alert('Facebook signup clicked (This is a demo)');
-            });
-            
-            document.getElementById('appleSignup').addEventListener('click', function() {
-                alert('Apple signup clicked (This is a demo)');
-            });
-        });
-    </script>
+const API = 'https://myapp-api.onrender.com'; // your Render URL
+document.getElementById('signupForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const full_name = document.getElementById('fullName').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+
+  const btn = document.getElementById('signupButton');
+  const txt = document.getElementById('buttonText');
+  const spin = document.getElementById('loadingSpinner');
+  txt.style.display='none'; spin.style.display='block'; btn.disabled=true;
+
+  try{
+    const res = await fetch(`${API}/signup`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ full_name, email, password })
+    });
+    const data = await res.json();
+    if(data.ok){ alert('Account created! Please login.'); location.href = 'index.html'; }
+    else{ alert(data.detail || data.msg || 'Signup failed'); }
+  }catch{ alert('Network error'); }
+  finally{ txt.style.display='block'; spin.style.display='none'; btn.disabled=false; }
+});
+</script>
+
 </body>
 </html>
